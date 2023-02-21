@@ -30,7 +30,7 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
 
     // get the top 5 cast
     let mut cast = Vec::new();
-    for element in dom.find(Attr("data-testid", "title-cast-item")).take(5) {
+    for element in dom.find(Attr("data-testid", "title-cast-item")).take(2) {
         let name = match element.find(Attr("data-testid", "title-cast-item__actor")).next() {
             Some(a_element) => a_element.text().trim().to_string(),
             None => "No name found".to_string(),
