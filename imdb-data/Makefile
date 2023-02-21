@@ -3,10 +3,10 @@ install:
 		cargo build -j 1
 
 build:
-	docker build -t nba-stat .
+	docker build -t imdb .
 
 rundocker:
-	docker run -it --rm -p 8080:8080 nba-stat
+	docker run -it --rm -p 8080:8080 imdb
 
 format:
 	cargo fmt --quiet
