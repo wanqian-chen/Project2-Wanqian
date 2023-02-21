@@ -1,7 +1,6 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use reqwest::{Client, Response};
 use select::document::Document;
-use select::predicate::Name;
 use std::io::Cursor;
 
 // import functions from lib.rs

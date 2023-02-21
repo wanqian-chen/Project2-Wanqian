@@ -1,6 +1,5 @@
 use select::document::Document;
-use select::predicate::{Attr, Class, Name, Predicate};
-use serde::{Deserialize, Serialize};
+use select::predicate::{Attr, Name};
 use serde_json::json;
 
 pub fn parse_info(dom: &Document) -> serde_json::Value {
