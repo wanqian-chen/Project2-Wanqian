@@ -31,12 +31,14 @@ async fn title(id: web::Path<String>) -> impl Responder {
         "Title: {}, \nRate: {}, \nCast: {}",
         info["title"],
         info["rate"],
-        format_args!("Name: {}, Role: {}, \nName: {}, Role: {}", 
-            info["cast"][0]["name"], 
-            info["cast"][0]["role"], 
-            info["cast"][1]["name"], 
-            info["cast"][1]["role"])
-    )) 
+        format_args!(
+            "Name: {}, Role: {}, \nName: {}, Role: {}",
+            info["cast"][0]["name"],
+            info["cast"][0]["role"],
+            info["cast"][1]["name"],
+            info["cast"][1]["role"]
+        )
+    ))
 }
 
 #[actix_web::main]
