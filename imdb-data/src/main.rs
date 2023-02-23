@@ -26,19 +26,20 @@ async fn title(id: web::Path<String>) -> impl Responder {
     // parse the document
     let info = parse_info(&dom);
 
-    // return the result
+    // return the result with bold text
     HttpResponse::Ok().body(format!(
-        "Title: {}, \nRate: {}, \nCast: {}, \nOrigin: {}",
+        "<b>Title:</b> {}<br><b>Rate:</b> {}<br><b>Cast:</b> {}<br><b>Origin:</b> {}<br><b>Language:</b> {}",
         info["title"],
         info["rate"],
-        format_args!(
-            "Name: {}, Role: {}, \nName: {}, Role: {}",
+        format_args!( // new line between cast
+            "Name: {}, Role: {}. <br>Name: {}, Role: {}",
             info["cast"][0]["name"],
             info["cast"][0]["role"],
             info["cast"][1]["name"],
             info["cast"][1]["role"]
         ),
-        info["origin"]
+        info["origin"],
+        info["language"]
     ))
 }
 
