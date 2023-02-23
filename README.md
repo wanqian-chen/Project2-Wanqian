@@ -8,11 +8,29 @@ This project is about getting information from IMDB. The information is about th
 
 ### installation
 
-Have rust installed on your computer. Then run the following command:
+To have it run locally, first please have rust installed on your computer.  
 
+To have in run on Kubernetes, first please install minikube. The instruction can be found [here](https://minikube.sigs.k8s.io/docs/start/).
+
+### Run
+
+To run locally, please run `cargo run` in the root directory.  
+
+To run on Kubernetes, please follow the steps below:
+
+1. `minikube start`
+2. Create a deployment: `kubectl create deployment imdb-api --image=registry.hub.docker.com/chloechen79/imdb`
+3. View deployment: `kubectl get deployments`
+6. Create service and expose it: `kubectl expose deployment imdb-api --type=LoadBalancer --port=8080`
+7. View services:  `kubectl get service imdb-api`
+8.  `minikube service imdb-api --url`
+9. Curl web service: i.e. `curl http://192.168.49.2:30082`
+10. Cleanup
 ```bash
-cargo run
-```
+kubectl delete service imdb-api
+kubectl delete deployment imdb-api
+minikube stop
+````
 
 ### Route
 
@@ -22,3 +40,11 @@ cargo run
 ### Example
 
 `/title/tt7335184` will get the information of the TV show "You", including the title, rate and cast.
+
+## Reference
+
+1. [IMDB](https://www.imdb.com/)
+2. [Kubernetes](https://kubernetes.io/docs/tutorials/hello-minikube/)
+3. [MiniKube]((https://minikube.sigs.k8s.io/docs/start/))
+4. [Applied Kubernetes by Noah Gift on Github](https://github.com/nogibjj/coursera-applied-de-kubernetes-lab)
+5. [Rust Template by Noah Gift on Github](https://github.com/noahgift/rust-new-project-template)
