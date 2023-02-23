@@ -28,7 +28,7 @@ async fn title(id: web::Path<String>) -> impl Responder {
 
     // return the result
     HttpResponse::Ok().body(format!(
-        "Title: {}, \nRate: {}, \nCast: {}",
+        "Title: {}, \nRate: {}, \nCast: {}, \nOrigin: {}",
         info["title"],
         info["rate"],
         format_args!(
@@ -37,7 +37,8 @@ async fn title(id: web::Path<String>) -> impl Responder {
             info["cast"][0]["role"],
             info["cast"][1]["name"],
             info["cast"][1]["role"]
-        )
+        ),
+        info["origin"]
     ))
 }
 

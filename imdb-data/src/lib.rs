@@ -59,6 +59,20 @@ pub fn get_cast(dom: &Document) -> Vec<serde_json::Value> {
     cast
 }
 
+// get origin of the movie or tv show
+pub fn get_origin(dom: &Document) -> String {
+    match dom
+        .find(Attr("data-testid", "title-details-origin"))
+        .next()
+    {
+        Some(element) => match element.find(Name("a")).next() {
+            Some(a_element) => a_element.text().trim().to_string(),
+            None => "No origin found".to_string(),
+        },
+        None => "No origin found".to_string(),
+    }
+}
+
 pub fn parse_info(dom: &Document) -> serde_json::Value {
     // get the title
     let title = get_title(dom);
@@ -69,11 +83,15 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
     // get the top 2 cast
     let cast = get_cast(dom);
 
+    // get the origin
+    let origin = get_origin(dom);
+
     // return object
     let result = json!({
         "title": title,
         "rate": rate,
-        "cast": cast
+        "cast": cast,
+        "origin": origin
     });
     result
 }
