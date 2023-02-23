@@ -73,6 +73,20 @@ pub fn get_origin(dom: &Document) -> String {
     }
 }
 
+// get primary language
+pub fn get_language(dom: &Document) -> String {
+    match dom
+        .find(Attr("data-testid", "title-details-languages"))
+        .next()
+    {
+        Some(element) => match element.find(Name("a")).next() {
+            Some(a_element) => a_element.text().trim().to_string(),
+            None => "No language found".to_string(),
+        },
+        None => "No language found".to_string(),
+    }
+}
+
 pub fn parse_info(dom: &Document) -> serde_json::Value {
     // get the title
     let title = get_title(dom);
@@ -86,12 +100,16 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
     // get the origin
     let origin = get_origin(dom);
 
+    // get the primary language
+    let language = get_language(dom);
+
     // return object
     let result = json!({
         "title": title,
         "rate": rate,
         "cast": cast,
-        "origin": origin
+        "origin": origin,
+        "language": language
     });
     result
 }
