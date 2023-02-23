@@ -2,18 +2,20 @@ use select::document::Document;
 use select::predicate::{Attr, Name};
 use serde_json::json;
 
-pub fn parse_info(dom: &Document) -> serde_json::Value {
-    // get the title
-    let title = match dom
+// get the title of the movie or tv show
+pub fn get_title(dom: &Document) -> String {
+    match dom
         .find(Attr("data-testid", "hero-title-block__title"))
         .next()
     {
         Some(element) => element.text().trim().to_string(),
         None => "No title found".to_string(), // or handle the error in some other way
-    };
+    }
+}
 
-    // get the rate
-    let rate = match dom
+// get the rate of the movie or tv show
+pub fn get_rate(dom: &Document) -> String {
+    match dom
         .find(Attr(
             "data-testid",
             "hero-rating-bar__aggregate-rating__score",
@@ -25,9 +27,11 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
             None => "No rate found".to_string(),
         },
         None => "No rate found".to_string(),
-    };
+    }
+}
 
-    // get the top 2 cast
+// get the top 2 cast of the movie or tv show
+pub fn get_cast(dom: &Document) -> Vec<serde_json::Value> {
     let mut cast = Vec::new();
     for element in dom.find(Attr("data-testid", "title-cast-item")).take(2) {
         let name = match element
@@ -52,6 +56,18 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
             "role": role
         }));
     }
+    cast
+}
+
+pub fn parse_info(dom: &Document) -> serde_json::Value {
+    // get the title
+    let title = get_title(dom);
+
+    // get the rate
+    let rate = get_rate(dom);
+
+    // get the top 2 cast
+    let cast = get_cast(dom);
 
     // return object
     let result = json!({
