@@ -35,7 +35,7 @@ minikube stop
 ### Route
 
 1. `/`: The home page of the website.
-2. `/search/{name}: Use the name to search the movie. **You can find redirect buttons on this page!**
+2. `/search/{name}`: Use the name to search the movie. **You can find redirect buttons on this page!**
 3. `/title/{id}`: Use the id to get the information of the movie.
 4. `/reviews/{id}`: Use the id to get the reviews of the movie.
 
@@ -47,7 +47,7 @@ minikube stop
 
 When you click "More Info" or go to `/title/tt7335184`, you will get the information of the TV show "You", including the title, rate and cast.
 
-![title](./img/title.png)
+![title](./img/info.png)
 
 When you click "Reviews" or go to `/reviews/tt7335184`, you will get the reviews of the TV show "You".
 
