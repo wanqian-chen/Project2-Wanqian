@@ -84,6 +84,7 @@ pub fn get_language(dom: &Document) -> String {
     }
 }
 
+// get details
 pub fn parse_info(dom: &Document) -> serde_json::Value {
     // get the title
     let title = get_title(dom);
