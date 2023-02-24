@@ -5,6 +5,9 @@ install:
 build:
 	docker build -t imdb .
 
+build-hub:
+	docker build -t chloechen79/imdb .
+
 rundocker:
 	docker run -it --rm -p 8080:8080 imdb
 
