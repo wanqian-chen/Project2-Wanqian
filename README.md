@@ -64,6 +64,6 @@ When you click "Reviews" or go to `/reviews/tt7335184`, you will get the reviews
 
 1. [IMDB](https://www.imdb.com/)
 2. [Kubernetes](https://kubernetes.io/docs/tutorials/hello-minikube/)
-3. [MiniKube]((https://minikube.sigs.k8s.io/docs/start/))
+3. [MiniKube](https://minikube.sigs.k8s.io/docs/start/)
 4. [Applied Kubernetes by Noah Gift on Github](https://github.com/nogibjj/coursera-applied-de-kubernetes-lab)
 5. [Rust Template by Noah Gift on Github](https://github.com/noahgift/rust-new-project-template)
