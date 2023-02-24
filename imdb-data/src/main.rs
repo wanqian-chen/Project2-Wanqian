@@ -11,7 +11,16 @@ use imdb_data::{parse_info, parse_reviews, search_result};
 async fn index() -> impl Responder {
     println!("Hello!");
     HttpResponse::Ok().body(
-        "Hello! This is an application to provide data from IMDB. <br>Try /search/{name} to start!",
+        "<html>
+            <head>
+                <title>Hello</title>
+            </head>
+            <body>
+                <h1><center>Hello!</center></h1>
+                <p>This is a simple web server for IMDB data.</p>
+                <p>Try <a href=\"/search/avengers\">/search/avengers</a></p>
+            </body>
+        </html>",
     )
 }
 
