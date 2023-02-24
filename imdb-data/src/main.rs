@@ -4,13 +4,52 @@ use select::document::Document;
 use std::io::Cursor;
 
 // import functions from lib.rs
-use imdb_data::{parse_reviews, parse_info};
+use imdb_data::{parse_info, parse_reviews, search_result};
 
 // A hello world handler
 #[get("/")]
 async fn index() -> impl Responder {
     println!("Hello!");
     HttpResponse::Ok().body("Hello! This is an application to provide data from IMDB.")
+}
+
+// A handler to get info by name
+#[get("/search/{name}")]
+async fn search(name: web::Path<String>) -> impl Responder {
+    let url = format!("https://www.imdb.com/find/?q={}", name);
+    // fetch the document of the url
+    let client = Client::new();
+    let res: Response = client.get(&url).send().await.unwrap();
+    let body = res.bytes().await.unwrap();
+    let dom = Document::from_read(Cursor::new(body)).unwrap();
+
+    // parse the document
+    let info = search_result(&dom);
+
+    // return the result
+    HttpResponse::Ok().body(format!(
+        "<html>
+            <head>
+                <title>IMDB Search</title>
+            </head>
+            <body>
+                <h1><center>Search Result</center></h1>
+                {}
+            </body>
+        </html>",
+        info.iter()
+            .map(|item| format!(
+                "
+                    <h3>Title: {}</h3>
+                    <p><i>Time: {}</i></p>
+                    <button onclick=\"window.location.href='/title/{}'\">More Info</button>
+                    <button onclick=\"window.location.href='/reviews/{}'\">Reviews</button>
+                ",
+                item["title"], item["time"], item["id"], item["id"]
+            ))
+            .collect::<Vec<String>>()
+            .join("")
+    ))
 }
 
 // A handler to get basic info of movie or tv show by id
@@ -34,18 +73,28 @@ async fn title(id: web::Path<String>) -> impl Responder {
             </head>
             <body>
                 <h1><center>Movie/TV Show Info</center></h1>
-                <p>Title: {}</p>
-                <p>Rate: {} / 10.0</p>
-                <p>Cast: </p>
+                <p><b>Title:</b> {}</p>
+                <p><b>Rate:</b> {} / 10.0</p>
+                <p><b>Top 5 Cast:</b></p>
                 <ul>
                     {}
                 </ul>
-                <p>Origin: {}</p>
-                <p>Language: {}</p>
+                <p><b>Origin:</b> {}</p>
+                <p><b>Language:</b> {}</p>
             </body>
         </html>",
-        info["title"], info["rate"], info["cast"].as_array().unwrap().iter().map(|cast| format!("<li>{}</li>", cast)).collect::<Vec<String>>().join(""), info["origin"], info["language"]
-    ))
+        info["title"],
+        info["rate"],
+        info["cast"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|cast| format!("<li>{}</li>", cast))
+            .collect::<Vec<String>>()
+            .join(""),
+        info["origin"],
+        info["language"]
+        ))
 }
 
 // A handler to reviews
@@ -68,7 +117,7 @@ async fn reviews(id: web::Path<String>) -> impl Responder {
                 <title>IMDB Reviews</title>
             </head>
             <body>
-                <h1>IMDB Reviews</h1>
+                <h1><center>IMDB Reviews</center></h1>
                 {}
             </body>
         </html>",

@@ -94,7 +94,7 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
     // get the rate
     let rate = get_rate(dom);
     // convert to float
-    let rate = rate.parse::<f32>().unwrap();
+    let rate_float = rate.parse::<f32>().unwrap();
 
     // get the cast
     let cast = get_cast(dom);
@@ -108,7 +108,7 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
     // return object
     let result = json!({
         "title": title,
-        "rate": rate,
+        "rate": rate_float,
         "cast": cast,
         "origin": origin,
         "language": language
@@ -159,4 +159,47 @@ pub fn parse_reviews(dom: &Document) -> Vec<serde_json::Value> {
         }));
     }
     reviews
+}
+
+// get 5 search results
+pub fn search_result(dom: &Document) -> Vec<serde_json::Value> {
+    let mut results = Vec::new();
+    for element in dom.find(Attr("class", "ipc-metadata-list-summary-item__c")).take(5) {
+        let title = match element.find(Attr("class", "ipc-metadata-list-summary-item__tc")).next() {
+            Some(element) => match element.find(Name("a")).next() {
+                Some(a_element) => a_element.text().trim().to_string(),
+                None => "No title found".to_string(),
+            },
+            None => "No title found".to_string(),
+        };
+
+        let link = match element.find(Attr("class", "result_text")).next() {
+            Some(element) => match element.find(Name("a")).next() {
+                Some(a_element) => a_element.attr("href").unwrap().to_string(),
+                None => "No link found".to_string(),
+            },
+            None => "No link found".to_string(),
+        };
+        // get the id of the movie or tv show which is between the first and second slash
+        let id = link
+            .split('/')
+            .nth(2)
+            .unwrap_or("No link found")
+            .to_string();
+
+        let time = match element.find(Attr("class", "ipc-metadata-list-summary-item__tc")).next() {
+            Some(element) => match element.find(Name("label")).next() {
+                Some(a_element) => a_element.text().trim().to_string(),
+                None => "No time found".to_string(),
+            },
+            None => "No time found".to_string(),
+        };
+
+        results.push(json!({
+            "title": title,
+            "id": id,
+            "time": time
+        }));
+    }
+    results
 }
