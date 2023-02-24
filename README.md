@@ -43,9 +43,15 @@ minikube stop
 
 `/search/you` will get the search result of the movie "You". It will show the top 5 results.
 
+![search](./img/search.png)
 
+When you click "More Info" or go to `/title/tt7335184`, you will get the information of the TV show "You", including the title, rate and cast.
 
-`/title/tt7335184` will get the information of the TV show "You", including the title, rate and cast.
+![title](./img/title.png)
+
+When you click "Reviews" or go to `/reviews/tt7335184`, you will get the reviews of the TV show "You".
+
+![reviews](./img/reviews.png)
 
 ## Reference
 
