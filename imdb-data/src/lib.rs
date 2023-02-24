@@ -33,7 +33,7 @@ pub fn get_rate(dom: &Document) -> String {
 // get the top 2 cast of the movie or tv show
 pub fn get_cast(dom: &Document) -> Vec<serde_json::Value> {
     let mut cast = Vec::new();
-    for element in dom.find(Attr("data-testid", "title-cast-item")).take(2) {
+    for element in dom.find(Attr("data-testid", "title-cast-item")).take(5) {
         let name = match element
             .find(Attr("data-testid", "title-cast-item__actor"))
             .next()
@@ -52,8 +52,8 @@ pub fn get_cast(dom: &Document) -> Vec<serde_json::Value> {
             None => "No role found".to_string(),
         };
         cast.push(json!({
-            "name": name,
-            "role": role
+            "Name": name,
+            "Role": role
         }));
     }
     cast
@@ -93,8 +93,10 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
 
     // get the rate
     let rate = get_rate(dom);
+    // convert to float
+    let rate = rate.parse::<f32>().unwrap();
 
-    // get the top 2 cast
+    // get the cast
     let cast = get_cast(dom);
 
     // get the origin
@@ -112,4 +114,49 @@ pub fn parse_info(dom: &Document) -> serde_json::Value {
         "language": language
     });
     result
+}
+
+// get 5 reviews
+pub fn parse_reviews(dom: &Document) -> Vec<serde_json::Value> {
+    let mut reviews = Vec::new();
+    for element in dom.find(Attr("class", "review-container")).take(5) {
+        let title = match element.find(Attr("class", "title")).next() {
+            Some(element) => element.text().trim().to_string(),
+            None => "No title found".to_string(),
+        };
+
+        let author = match element.find(Attr("class", "display-name-link")).next() {
+            Some(element) => element.text().trim().to_string(),
+            None => "No author found".to_string(),
+        };
+
+        let date = match element.find(Attr("class", "review-date")).next() {
+            Some(element) => element.text().trim().to_string(),
+            None => "No date found".to_string(),
+        };
+
+        let content = match element.find(Attr("class", "text show-more__control")).next() {
+            Some(element) => element.text().trim().to_string(),
+            None => "No review found".to_string(),
+        };
+
+        let rate = match element.find(Attr("class", "rating-other-user-rating")).next() {
+            Some(element) => match element.find(Name("span")).next() {
+                Some(span_element) => span_element.text().trim().to_string(),
+                None => "No rate found".to_string(),
+            },
+            None => "No rate found".to_string(),
+        };
+        // convert to float
+        let rate = rate.parse::<f32>().unwrap();
+
+        reviews.push(json!({
+            "title": title,
+            "content": content,
+            "rate": rate,
+            "author": author,
+            "date": date
+        }));
+    }
+    reviews
 }
