@@ -35,9 +35,15 @@ minikube stop
 ### Route
 
 1. `/`: The home page of the website.
-2. `/title/{id}`: Use the id to get the information of the movie.
+2. `/search/{name}: Use the name to search the movie. **You can find redirect buttons on this page!**
+3. `/title/{id}`: Use the id to get the information of the movie.
+4. `/reviews/{id}`: Use the id to get the reviews of the movie.
 
 ### Example
+
+`/search/you` will get the search result of the movie "You". It will show the top 5 results.
+
+
 
 `/title/tt7335184` will get the information of the TV show "You", including the title, rate and cast.
 
