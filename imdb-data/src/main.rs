@@ -173,7 +173,7 @@ async fn main() -> std::io::Result<()> {
             .service(reviews)
             .service(search)
     })
-    .bind("0.0.0.0:8081")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }
