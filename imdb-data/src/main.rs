@@ -10,7 +10,9 @@ use imdb_data::{parse_info, parse_reviews, search_result};
 #[get("/")]
 async fn index() -> impl Responder {
     println!("Hello!");
-    HttpResponse::Ok().body("Hello! This is an application to provide data from IMDB. <br>Try /search/{name} to start!")
+    HttpResponse::Ok().body(
+        "Hello! This is an application to provide data from IMDB. <br>Try /search/{name} to start!",
+    )
 }
 
 // A handler to get info by name
@@ -31,8 +33,13 @@ async fn search(name: web::Path<String>) -> impl Responder {
         .iter()
         .map(|item| {
             let mut item = item.clone();
-            item["title_url"] = format!("/title/{}", item["id"].as_str().unwrap().replace("\"", "")).into();
-            item["review_url"] = format!("/reviews/{}", item["id"].as_str().unwrap().replace("\"", "")).into();
+            item["title_url"] =
+                format!("/title/{}", item["id"].as_str().unwrap().replace("\"", "")).into();
+            item["review_url"] = format!(
+                "/reviews/{}",
+                item["id"].as_str().unwrap().replace("\"", "")
+            )
+            .into();
             item
         })
         .collect::<Vec<serde_json::Value>>();
@@ -109,7 +116,7 @@ async fn title(id: web::Path<String>) -> impl Responder {
             .join(""),
         info["origin"],
         info["language"]
-        ))
+    ))
 }
 
 // A handler to reviews
@@ -146,18 +153,27 @@ async fn reviews(id: web::Path<String>) -> impl Responder {
                     <p><i>User: {}</i></p>
                     <p><i>Date: {}</i></p>
                 </div>",
-                review["title"], review["rate"], review["content"], review["author"], review["date"]
+                review["title"],
+                review["rate"],
+                review["content"],
+                review["author"],
+                review["date"]
             ))
             .collect::<Vec<String>>()
             .join("<br>")
     ))
-    
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(index).service(title).service(reviews).service(search))
-        .bind("0.0.0.0:8081")?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(index)
+            .service(title)
+            .service(reviews)
+            .service(search)
+    })
+    .bind("0.0.0.0:8081")?
+    .run()
+    .await
 }

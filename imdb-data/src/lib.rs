@@ -61,10 +61,7 @@ pub fn get_cast(dom: &Document) -> Vec<serde_json::Value> {
 
 // get origin of the movie or tv show
 pub fn get_origin(dom: &Document) -> String {
-    match dom
-        .find(Attr("data-testid", "title-details-origin"))
-        .next()
-    {
+    match dom.find(Attr("data-testid", "title-details-origin")).next() {
         Some(element) => match element.find(Name("a")).next() {
             Some(a_element) => a_element.text().trim().to_string(),
             None => "No origin found".to_string(),
@@ -135,12 +132,18 @@ pub fn parse_reviews(dom: &Document) -> Vec<serde_json::Value> {
             None => "No date found".to_string(),
         };
 
-        let content = match element.find(Attr("class", "text show-more__control")).next() {
+        let content = match element
+            .find(Attr("class", "text show-more__control"))
+            .next()
+        {
             Some(element) => element.text().trim().to_string(),
             None => "No review found".to_string(),
         };
 
-        let rate = match element.find(Attr("class", "rating-other-user-rating")).next() {
+        let rate = match element
+            .find(Attr("class", "rating-other-user-rating"))
+            .next()
+        {
             Some(element) => match element.find(Name("span")).next() {
                 Some(span_element) => span_element.text().trim().to_string(),
                 None => "No rate found".to_string(),
@@ -164,8 +167,14 @@ pub fn parse_reviews(dom: &Document) -> Vec<serde_json::Value> {
 // get 5 search results
 pub fn search_result(dom: &Document) -> Vec<serde_json::Value> {
     let mut results = Vec::new();
-    for element in dom.find(Attr("class", "ipc-metadata-list-summary-item__c")).take(5) {
-        let title = match element.find(Attr("class", "ipc-metadata-list-summary-item__tc")).next() {
+    for element in dom
+        .find(Attr("class", "ipc-metadata-list-summary-item__c"))
+        .take(5)
+    {
+        let title = match element
+            .find(Attr("class", "ipc-metadata-list-summary-item__tc"))
+            .next()
+        {
             Some(element) => match element.find(Name("a")).next() {
                 Some(a_element) => a_element.text().trim().to_string(),
                 None => "No title found".to_string(),
@@ -173,9 +182,15 @@ pub fn search_result(dom: &Document) -> Vec<serde_json::Value> {
             None => "No title found".to_string(),
         };
 
-        let link = match element.find(Attr("class", "ipc-metadata-list-summary-item__tc")).next() {
+        let link = match element
+            .find(Attr("class", "ipc-metadata-list-summary-item__tc"))
+            .next()
+        {
             Some(element) => match element.find(Name("a")).next() {
-                Some(a_element) => a_element.attr("href").unwrap_or("No link found").to_string(),
+                Some(a_element) => a_element
+                    .attr("href")
+                    .unwrap_or("No link found")
+                    .to_string(),
                 None => "No link found".to_string(),
             },
             None => "No link found".to_string(),
@@ -188,7 +203,10 @@ pub fn search_result(dom: &Document) -> Vec<serde_json::Value> {
             .unwrap_or("No link found")
             .to_string();
 
-        let time = match element.find(Attr("class", "ipc-metadata-list-summary-item__tc")).next() {
+        let time = match element
+            .find(Attr("class", "ipc-metadata-list-summary-item__tc"))
+            .next()
+        {
             Some(element) => match element.find(Name("label")).next() {
                 Some(a_element) => a_element.text().trim().to_string(),
                 None => "No time found".to_string(),
