@@ -10,7 +10,7 @@ use imdb_data::{parse_info, parse_reviews, search_result};
 #[get("/")]
 async fn index() -> impl Responder {
     println!("Hello!");
-    HttpResponse::Ok().body("Hello! This is an application to provide data from IMDB.")
+    HttpResponse::Ok().body("Hello! This is an application to provide data from IMDB. <br>Try /search/{name} to start!")
 }
 
 // A handler to get info by name
@@ -24,7 +24,18 @@ async fn search(name: web::Path<String>) -> impl Responder {
     let dom = Document::from_read(Cursor::new(body)).unwrap();
 
     // parse the document
-    let info = search_result(&dom);
+    let search_res = search_result(&dom);
+
+    // combine window.location.href='/reviews/ with id
+    let info = search_res
+        .iter()
+        .map(|item| {
+            let mut item = item.clone();
+            item["title_url"] = format!("/title/{}", item["id"].as_str().unwrap().replace("\"", "")).into();
+            item["review_url"] = format!("/reviews/{}", item["id"].as_str().unwrap().replace("\"", "")).into();
+            item
+        })
+        .collect::<Vec<serde_json::Value>>();
 
     // return the result
     HttpResponse::Ok().body(format!(
@@ -42,10 +53,14 @@ async fn search(name: web::Path<String>) -> impl Responder {
                 "
                     <h3>Title: {}</h3>
                     <p><i>Time: {}</i></p>
-                    <button onclick=\"window.location.href='/title/{}'\">More Info</button>
-                    <button onclick=\"window.location.href='/reviews/{}'\">Reviews</button>
+                    <button onclick=\"window.location.href='{}'\">More Info</button>
+                    <button onclick=\"window.location.href='{}'\">Reviews</button>
+                    <hr>
                 ",
-                item["title"], item["time"], item["id"], item["id"]
+                item["title"].as_str().unwrap(),
+                item["time"].as_str().unwrap(),
+                item["title_url"].as_str().unwrap(),
+                item["review_url"].as_str().unwrap()
             ))
             .collect::<Vec<String>>()
             .join("")
@@ -139,10 +154,9 @@ async fn reviews(id: web::Path<String>) -> impl Responder {
     
 }
 
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(index).service(title).service(reviews))
+    HttpServer::new(|| App::new().service(index).service(title).service(reviews).service(search))
         .bind("0.0.0.0:8081")?
         .run()
         .await

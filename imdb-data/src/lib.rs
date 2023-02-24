@@ -30,7 +30,7 @@ pub fn get_rate(dom: &Document) -> String {
     }
 }
 
-// get the top 2 cast of the movie or tv show
+// get the top 5 cast of the movie or tv show
 pub fn get_cast(dom: &Document) -> Vec<serde_json::Value> {
     let mut cast = Vec::new();
     for element in dom.find(Attr("data-testid", "title-cast-item")).take(5) {
@@ -173,13 +173,14 @@ pub fn search_result(dom: &Document) -> Vec<serde_json::Value> {
             None => "No title found".to_string(),
         };
 
-        let link = match element.find(Attr("class", "result_text")).next() {
+        let link = match element.find(Attr("class", "ipc-metadata-list-summary-item__tc")).next() {
             Some(element) => match element.find(Name("a")).next() {
-                Some(a_element) => a_element.attr("href").unwrap().to_string(),
+                Some(a_element) => a_element.attr("href").unwrap_or("No link found").to_string(),
                 None => "No link found".to_string(),
             },
             None => "No link found".to_string(),
         };
+
         // get the id of the movie or tv show which is between the first and second slash
         let id = link
             .split('/')
@@ -194,6 +195,8 @@ pub fn search_result(dom: &Document) -> Vec<serde_json::Value> {
             },
             None => "No time found".to_string(),
         };
+        // replace "–" with "-"
+        let time = time.replace("–", "-");
 
         results.push(json!({
             "title": title,
