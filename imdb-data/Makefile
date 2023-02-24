@@ -9,7 +9,7 @@ build-hub:
 	docker build -t chloechen79/imdb .
 
 push-hub:
-	docker push chloechen79/imdb
+	docker push chloechen79/imdb:latest
 
 rundocker:
 	docker run -it --rm -p 8080:8080 imdb
