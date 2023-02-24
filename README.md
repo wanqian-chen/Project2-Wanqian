@@ -10,7 +10,14 @@ This project is about getting information from IMDB. The information is about th
 
 To have it run locally, first please have rust installed on your computer.  
 
-To have in run on Kubernetes, first please install minikube. The instruction can be found [here](https://minikube.sigs.k8s.io/docs/start/). I have already push the docker to [Docker Hub](https://hub.docker.com/repository/docker/chloechen79/imdb).
+To have in run on Kubernetes, first please install minikube. The instruction can be found [here](https://minikube.sigs.k8s.io/docs/start/).  
+
+I have already built and pushed the docker to [Docker Hub](https://hub.docker.com/repository/docker/chloechen79/imdb) by
+    
+```bash
+make build-hub
+make push-hub
+```
 
 ### Run
 
